@@ -50,13 +50,11 @@ class CourseController {
     async allCoursesBySubject(ctx) {
         return new Promise((resolve, reject) => {
             console.log()
-            const subject = ctx.params.subject;
-            const catalog = ctx.params.catalog;
-            let query = `SELECT * FROM course_catalog WHERE subject = ? AND catalog = ?`;
+                        let query = `SELECT * FROM course_catalog WHERE subject = ? AND catalog = ?`;
             console.log(query);
             dbConnection.query({
                 sql: query,
-                values: [subject]
+                values: [ctx.params.subject, ctx.params.catalog]
             }, (error, tuples) => {
                 if (error) {
                     return reject(`Error when trying to retrieve course descriptions for ${subject} --- 
@@ -72,6 +70,82 @@ class CourseController {
             ctx.status = "Failed";
         });
     }
+
+    async allCoursesForTerm(ctx) {
+        return new Promise((resolve, reject) => {
+            console.log();
+            const subject = ctx.params.term;
+            let query = `SELECT * FROM course_catalog WHERE term = ?`;
+            console.log(query);
+            dbConnection.query({
+                sql: query,
+                values: [subject]
+            }, (error, tuples) => {
+                if (error) {
+                    return reject(`Error when trying to retrieve course descriptions for ${term} --- 
+                                        in courseDescriptionsForSubject. The error msg: ${error}`);
+                }
+                ctx.body = tuples;
+                ctx.status = 200;
+                return resolve();
+            })
+        }).catch(err => {
+            console.log(`Error in courseDescriptionsByTerm for subject ${term}: ${err}`);
+            ctx.body = {error: err};
+            ctx.status = "Failed";
+        });
+    }
+
+    async allCourses(ctx) {
+        return new Promise((resolve, reject) => {
+            console.log();
+            let query = `SELECT * FROM course_catalog`;
+            console.log(query);
+            dbConnection.query({
+                sql: query,
+                values: [subject]
+            }, (error, tuples) => {
+                if (error) {
+                    return reject(`Error when trying to retrieve course descriptions --- 
+                                        in allCourses. The error msg: ${error}`);
+                }
+                ctx.body = tuples;
+                ctx.status = 200;
+                return resolve();
+            })
+        }).catch(err => {
+            console.log(`Error in allCourses: ${err}`);
+            ctx.body = {error: err};
+            ctx.status = "Failed";
+        });
+    }
+
+    async allCoursesByCatalog(ctx) {
+        return new Promise((resolve, reject) => {
+            console.log();
+            const subject = ctx.params.catalog;
+            let query = `SELECT * FROM course_catalog WHERE catalog = ?`;
+            console.log(query);
+            dbConnection.query({
+                sql: query,
+                values: [subject]
+            }, (error, tuples) => {
+                if (error) {
+                    return reject(`Error when trying to retrieve course descriptions for ${catalog} --- 
+                                        in allCoursesByCatalog. The error msg: ${error}`);
+                }
+                ctx.body = tuples;
+                ctx.status = 200;
+                return resolve();
+            })
+        }).catch(err => {
+            console.log(`Error in allCoursesByCatalog for subject ${term}: ${err}`);
+            ctx.body = {error: err};
+            ctx.status = "Failed";
+        });
+    }
+
+
 }
 
 
